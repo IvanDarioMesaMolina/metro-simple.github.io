@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Login y Registro</title>
+<!-- Metro 4 UI -->
+<link href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css" rel="stylesheet">
+<script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+        body {
+            background-color: #bb7878;
+        }
+        .login-container, .register-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .register-container {
+            display: none;
+        }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<section class="login-container" id="loginSection">
+    <h2 class="text-center">Iniciar Sesión</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="usuario">Usuario</label>
+            <input type="text" id="usuario" class="input-large" placeholder="Ivan Mesa" required>
+        </div>
+        <div class="form-group">
+            <label for="clave">Contraseña</label>
+            <input type="password" id="clave" class="input-large" placeholder="123456" required>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="button success" style="width: 100%;">Entrar</button>
+        </div>
+    </form>
+    <div class="text-center mt-2">
+        <button class="button secondary" onclick="mostrarRegistro()">¿No tienes cuenta? Regístrate</button>
+    </div>
+</section>
+
+<!-- Registro -->
+<section class="register-container" id="registerSection">
+    <h2 class="text-center">Registro</h2>
+    <form id="registerForm">
+        <div class="form-group">
+            <label for="newUsuario">Nuevo Usuario</label>
+            <input type="text" id="newUsuario" class="input-large" required>
+        </div>
+        <div class="form-group">
+            <label for="newClave">Nueva Contraseña</label>
+            <input type="password" id="newClave" class="input-large" required>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="button primary" style="width: 100%;">Registrar</button>
+        </div>
+    </form>
+    <div class="text-center mt-2">
+        <button class="button link" onclick="mostrarLogin()">¿Ya tienes cuenta? Inicia sesión</button>
+    </div>
+</section>
+
+<script>
+    // Alternar entre login y registro
+    function mostrarRegistro() {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("registerSection").style.display = "block";
+    }
+
+    function mostrarLogin() {
+        document.getElementById("registerSection").style.display = "none";
+        document.getElementById("loginSection").style.display = "block";
+    }
+
+    // Guardar en localStorage
+    function guardarUsuario(nombre, clave) {
+        localStorage.setItem(nombre, clave);
+    }
+
+    // Verificar usuario
+    function verificarUsuario(nombre, clave) {
+        return localStorage.getItem(nombre) === clave;
+    }
+
+    // Login
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        let usuario = document.getElementById("usuario").value;
+        let clave = document.getElementById("clave").value;
+
+        if (verificarUsuario(usuario, clave)) {
+            Swal.fire({
+                icon: "success",
+                title: "Inicio de sesión exitoso!",
+                text: `Bienvenido, ${usuario}.`
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "usuario o contraseña incorrectos!",
+                footer: '<a href="#">¿Por qué me sale este problema?</a>'
+            });
+        }
+    });
+
+    // Registro
+    document.getElementById("registerForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        let nuevoUsuario = document.getElementById("newUsuario").value;
+        let nuevaClave = document.getElementById("newClave").value;
+
+        if (localStorage.getItem(nuevoUsuario)) {
+            Swal.fire({
+                icon: "warning",
+                title: "Este usuario ya existe",
+                text: "Elige otro nombre de usuario."
+            });
+        } else {
+            guardarUsuario(nuevoUsuario, nuevaClave);
+            Swal.fire({
+                icon: "success",
+                title: "Registro exitoso!",
+                text: "Ahora puedes iniciar sesión."
+            });
+            document.getElementById("registerForm").reset();
+            mostrarLogin();
+        }
+    });
+</script>
+
+</body>
+</html>
